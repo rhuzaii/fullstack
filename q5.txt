@@ -1,0 +1,23 @@
+function vowelCount(str) {
+  let count = { a: 0, e: 0, i: 0, o: 0, u: 0 };
+
+  str = str.toLowerCase();
+
+  for (let ch of str) {
+    if (count.hasOwnProperty(ch)) {
+      count[ch]++;
+    }
+  }
+
+  return count;
+}
+
+// Function call
+const result = vowelCount("Le Tour de France");
+
+console.log("Vowel Count:");
+console.log("a:", result.a);
+console.log("e:", result.e);
+console.log("i:", result.i);
+console.log("o:", result.o);
+console.log("u:", result.u);
