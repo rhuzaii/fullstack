@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Academic Data</title>
+</head>
+<body>
+
+<h3>Student Academic Details</h3>
+
+<script>
+function Student(usn, subCode, subName, cie, see) {
+
+  // Private variables (closure)
+  let cieMarks = cie;
+  let seeMarks = see;
+
+  // Public method
+  return {
+    usn: usn,
+    subjectCode: subCode,
+    subjectName: subName,
+
+    getTotalMarks: function () {
+      return cieMarks + seeMarks;
+    },
+
+    displayDetails: function () {
+      document.write("<b>USN:</b> " + usn + "<br>");
+      document.write("<b>Subject Code:</b> " + subCode + "<br>");
+      document.write("<b>Subject Name:</b> " + subName + "<br>");
+      document.write("<b>Total Marks:</b> " + this.getTotalMarks() + "<br><br>");
+    }
+  };
+}
+
+// Creating student object
+const student1 = Student("1RV21CS001", "CS101", "JavaScript", 30, 60);
+
+// Display student details
+student1.displayDetails();
+</script>
+
+</body>
+</html>
