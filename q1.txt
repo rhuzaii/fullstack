@@ -1,0 +1,22 @@
+function translate(text) {
+  let result = "";
+  let vowels = "aeiouAEIOU";
+
+  for (let i = 0; i < text.length; i++) {
+    let ch = text[i];
+
+    if (/[a-zA-Z]/.test(ch) && !vowels.includes(ch)) {
+      result += ch + "o" + ch;
+    } else {
+      result += ch;
+    }
+  }
+
+  return result;
+
+}
+
+console.log(translate("this is fun"));
+console.log(translate("Hello, World!"));
+console.log(translate("JavaScript is awesome!"));
+
