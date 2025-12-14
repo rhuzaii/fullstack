@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Anonymous Functions</title>
+</head>
+<body>
+
+<script>
+// Anonymous function to calculate sum
+var sum = function(a, b) {
+  return a + b;
+};
+
+// Anonymous function to check even or odd
+var evenOdd = function(num) {
+  if (num % 2 === 0)
+    return "Even";
+  else
+    return "Odd";
+};
+
+// Function calls
+var resultSum = sum(10, 20);
+var resultEvenOdd = evenOdd(15);
+
+// Display output
+document.write("Sum of two numbers: " + resultSum + "<br>");
+document.write("Number is: " + resultEvenOdd);
+</script>
+
+</body>
+</html>
+
