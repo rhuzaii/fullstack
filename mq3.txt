@@ -1,0 +1,126 @@
+Question 3 Build an Internship Tracking System using Node.js, Express, and MongoDB with the following requirements:
+• Create a MongoDB collection to store internship details with fields:
+Student_ID, Name, Company, Duration, and Status.
+• Accept internship data through a web form and store it in the database.
+• Implement a GET route to display all students interning at "Infosys".
+• Implement a PUT route to update the status when a student's internship is marked as completed.
+
+
+Index.html  
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Internship Tracking System</title>
+</head>
+<body>
+  <h2>Internship Details Form</h2>
+
+  <form action="/submit" method="post">
+    Student ID:
+    <input type="text" name="student_id" required><br><br>
+
+    Name:
+    <input type="text" name="name" required><br><br>
+
+    Company:
+    <input type="text" name="company" required><br><br>
+
+    Duration (months):
+    <input type="number" name="duration" required><br><br>
+
+    Status:
+    <input type="text" name="status" value="Ongoing"><br><br>
+
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>
+ 
+app.js  
+ 
+const express = require('express');
+const bodyParser = require('body-parser');
+const { MongoClient, ObjectId } = require('mongodb');
+
+const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+
+const url = "mongodb://127.0.0.1:27017";
+const dbName = "internshipDB";
+let db;
+
+// Connect to MongoDB
+MongoClient.connect(url)
+  .then(client => {
+    db = client.db(dbName);
+    console.log("Connected to MongoDB");
+  })
+  .catch(err => console.log(err));
+
+// Serve HTML form
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
+
+// POST: Store internship details
+app.post('/submit', async (req, res) => {
+  const internship = {
+    student_id: req.body.student_id,
+    name: req.body.name,
+    company: req.body.company,
+    duration: parseInt(req.body.duration),
+    status: req.body.status
+  };
+
+  await db.collection("internships").insertOne(internship);
+  res.send("Internship details stored successfully");
+});
+
+// GET: Display students interning at Infosys
+app.get('/internships/infosys', async (req, res) => {
+  const students = await db.collection("internships")
+    .find({ company: "Infosys" })
+    .toArray();
+
+  res.json(students);
+});
+
+// PUT: Update internship status to Completed
+app.put('/internship/:id', async (req, res) => {
+  const id = req.params.id;
+
+  await db.collection("internships").updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { status: "Completed" } }
+  );
+
+  res.json({ message: "Internship status updated to Completed" });
+});
+
+// Start server
+app.listen(3000, () => {
+  console.log("Server running at http://localhost:3000");
+});
+
+
+
+GET – Students interning at Infosys
+
+GET http://localhost:3000/internships/infosys
+
+✔ PUT – Update Internship Status
+
+PUT http://localhost:3000/internship/<student_object_id>
+Response:
+
+{
+  "message": "Internship status updated to Completed"
+}
+
+MongoDB Verification (Optional)
+
+mongosh
+use internshipDB
+db.internships.find().pretty()
