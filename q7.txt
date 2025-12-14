@@ -1,5 +1,64 @@
+package.json
+
 {
   "name": "stack_queue",
   "version": "1.0.0",
   "type": "module"
 }
+
+stack.js
+let stack = [];
+
+function push(item) {
+  stack.push(item);
+}
+
+function pop() {
+  return stack.pop();
+}
+
+function displayStack() {
+  console.log("Stack:", stack);
+}
+
+export { push, pop, displayStack };
+
+
+queue.js
+
+let queue = [];
+
+function enqueue(item) {
+  queue.push(item);
+}
+
+function dequeue() {
+  return queue.shift();
+}
+
+function displayQueue() {
+  console.log("Queue:", queue);
+}
+
+export { enqueue, dequeue, displayQueue };
+
+main.js
+
+import { push, pop, displayStack } from "./stack.js";
+import { enqueue, dequeue, displayQueue } from "./queue.js";
+
+// Stack operations
+push(10);
+push(20);
+push(30);
+displayStack();
+pop();
+displayStack();
+
+// Queue operations
+enqueue(1);
+enqueue(2);
+enqueue(3);
+displayQueue();
+dequeue();
+displayQueue();
