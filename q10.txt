@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ticket Booking Counter</title>
+</head>
+<body>
+
+<script>
+function ticketCounter() {
+  let tickets = 0;   // outer function variable
+
+  function bookTicket() {   // inner function
+    tickets++;
+    document.write("Ticket booked. Total tickets: " + tickets + "<br>");
+  }
+
+  return bookTicket;   // return inner function (closure)
+}
+
+// Create closure
+var book = ticketCounter();
+
+// Call the function three times
+book();
+book();
+book();
+</script>
+
+</body>
+</html>
+
