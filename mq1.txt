@@ -1,0 +1,123 @@
+Question 1   Write a Complaint Management API using Node.js, Express, and MongoDB with the following features:
+• Each complaint should include: Complaint ID, User Name, Issue, and Status.
+• Implement a POST route to submit a new complaint.
+• Implement a PUT route to update the status of a complaint (e.g., "In Progress", "Resolved").
+• Implement a GET route to retrieve all complaints that are currently pending.  
+
+
+app.js 
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const { MongoClient, ObjectId } = require('mongodb');
+
+const app = express();
+app.use(bodyParser.json());
+
+// MongoDB URL & Database
+const url = "mongodb://127.0.0.1:27017";
+const dbName = "complaintDB";
+let db;
+
+// Connect to MongoDB
+MongoClient.connect(url)
+  .then(client => {
+    db = client.db(dbName);
+    console.log("Connected to MongoDB");
+  })
+  .catch(err => console.log(err));
+
+/* ----------------------------------
+   POST: Submit New Complaint
+-----------------------------------*/
+app.post('/complaint', async (req, res) => {
+  const complaint = {
+    userName: req.body.userName,
+    issue: req.body.issue,
+    status: "Pending"
+  };
+
+  const result = await db.collection("complaints").insertOne(complaint);
+  res.json({ message: "Complaint submitted", complaintId: result.insertedId });
+});
+
+/* ----------------------------------
+   PUT: Update Complaint Status
+-----------------------------------*/
+app.put('/complaint/:id', async (req, res) => {
+  const id = req.params.id;
+  const newStatus = req.body.status;
+
+  const result = await db.collection("complaints").updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { status: newStatus } }
+  );
+
+  res.json({ message: "Complaint status updated" });
+});
+
+/* ----------------------------------
+   GET: Get All Pending Complaints
+-----------------------------------*/
+app.get('/complaints/pending', async (req, res) => {
+  const complaints = await db.collection("complaints")
+    .find({ status: "Pending" })
+    .toArray();
+
+  res.json(complaints);
+});
+
+// Start Server
+app.listen(3000, () => {
+  console.log("Server running at http://localhost:3000");
+});
+
+
+
+
+POST – Submit Complaint
+URL
+
+POST http://localhost:3000/complaint
+Body (JSON)
+
+{
+  "userName": "Rana",
+  "issue": "Internet not working"
+}
+Output
+
+{
+  "message": "Complaint submitted",
+  "complaintId": "64fa..."
+}
+
+PUT – Update Complaint Status
+URL
+
+PUT http://localhost:3000/complaint/64fa...
+Body
+
+{
+  "status": "Resolved"
+}
+Output
+
+{
+  "message": "Complaint status updated"
+}
+
+GET – Fetch Pending Complaints
+URL
+
+GET http://localhost:3000/complaints/pending
+Output
+
+[
+  {
+    "_id": "...",
+    "userName": "Rana",
+    "issue": "Internet not working",
+    "status": "Pending"
+  }
+]
