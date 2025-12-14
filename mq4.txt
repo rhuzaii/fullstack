@@ -1,0 +1,136 @@
+Question 4   Develop a Node.js application using Express and MongoDB to manage hospital data with the following requirements:
+• Accept and store hospital details: Hospital_ID, Name, Location, Total_Beds, and Occupied_Beds using a web form.
+• Store this information in a MongoDB collection.
+• Implement a GET route to display all hospitals where available beds (Total_Beds - Occupied_Beds) are less than 10.
+• Implement a POST route to admit a patient, which will increment the Occupied_Beds count for the specified hospital.
+
+
+index.html  
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hospital Management</title>
+</head>
+<body>
+  <h2>Hospital Details Form</h2>
+
+  <form action="/add-hospital" method="post">
+    Hospital ID:
+    <input type="text" name="hospital_id" required><br><br>
+
+    Name:
+    <input type="text" name="name" required><br><br>
+
+    Location:
+    <input type="text" name="location" required><br><br>
+
+    Total Beds:
+    <input type="number" name="total_beds" required><br><br>
+
+    Occupied Beds:
+    <input type="number" name="occupied_beds" required><br><br>
+
+    <button type="submit">Add Hospital</button>
+  </form>
+
+  <br><hr><br>
+
+  <h3>Admit Patient</h3>
+  <form action="/admit" method="post">
+    Hospital ID:
+    <input type="text" name="hospital_id" required><br><br>
+
+    <button type="submit">Admit Patient</button>
+  </form>
+</body>
+</html>
+ 
+app.js  
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const { MongoClient } = require('mongodb');
+
+const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+
+const url = "mongodb://127.0.0.1:27017";
+const dbName = "hospitalDB";
+let db;
+
+// Connect to MongoDB
+MongoClient.connect(url)
+  .then(client => {
+    db = client.db(dbName);
+    console.log("Connected to MongoDB");
+  })
+  .catch(err => console.log(err));
+
+// Serve HTML form
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
+
+// POST: Add hospital details
+app.post('/add-hospital', async (req, res) => {
+  const hospital = {
+    hospital_id: req.body.hospital_id,
+    name: req.body.name,
+    location: req.body.location,
+    total_beds: parseInt(req.body.total_beds),
+    occupied_beds: parseInt(req.body.occupied_beds)
+  };
+
+  await db.collection("hospitals").insertOne(hospital);
+  res.send("Hospital details stored successfully");
+});
+
+// GET: Hospitals with available beds < 10
+app.get('/low-beds', async (req, res) => {
+  const hospitals = await db.collection("hospitals").find({
+    $expr: {
+      $lt: [
+        { $subtract: ["$total_beds", "$occupied_beds"] },
+        10
+      ]
+    }
+  }).toArray();
+
+  res.json(hospitals);
+});
+
+// POST: Admit patient (increment occupied beds)
+app.post('/admit', async (req, res) => {
+  await db.collection("hospitals").updateOne(
+    { hospital_id: req.body.hospital_id },
+    { $inc: { occupied_beds: 1 } }
+  );
+
+  res.send("Patient admitted successfully");
+});
+
+// Start server
+app.listen(3000, () => {
+  console.log("Server running at http://localhost:3000");
+});
+
+
+
+GET – Hospitals with Low Bed Availability
+
+GET http://localhost:3000/low-beds
+Returns hospitals where:
+
+(Total_Beds - Occupied_Beds) < 10
+
+✔ Admit Patient
+* Enter Hospital ID
+* Click Admit Patient
+* Occupied_Beds increases by 1
+
+MongoDB Verification (Optional)
+
+mongosh
+use hospitalDB
+db.hospitals.find().pretty()
