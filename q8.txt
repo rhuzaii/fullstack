@@ -1,73 +1,33 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <title>User Information Form</title>
+    <head><title>Form Submission</title>
+        <script type="text/javascript">
+            //<![CDATA[
+            function validate() {
+                var age=document.getElementById("age").value;
+                var weight=document.getElementById("weight").value;
 
-  <script type="text/javascript">
-    function validateForm() {
+                if(age<=17){
+                    alert("Age must be greater than 17");
+                    return false;
+                }
 
-      var fname = document.getElementById("fname").value;
-      var lname = document.getElementById("lname").value;
-      var minit = document.getElementById("minit").value;
-      var age = document.getElementById("age").value;
-      var weight = document.getElementById("weight").value;
-
-      if (fname === "") {
-        alert("First name cannot be empty");
-        return false;
-      }
-
-      if (lname === "") {
-        alert("Last name cannot be empty");
-        return false;
-      }
-
-      if (minit !== "" && minit.length !== 1) {
-        alert("Middle initial must be a single character");
-        return false;
-      }
-
-      if (isNaN(age) || age <= 17) {
-        alert("Age must be a number greater than 17");
-        return false;
-      }
-
-      if (isNaN(weight) || weight < 45 || weight > 75) {
-        alert("Weight must be between 45 and 75");
-        return false;
-      }
-
-      alert("All details entered correctly");
-      return true;
-    }
-  </script>
-</head>
-
-<body>
-  <h2>User Information Form</h2>
-
-  <form action="#" onsubmit="return validateForm();">
-
-    First Name:
-    <input type="text" id="fname" /><br /><br />
-
-    Middle Initial:
-    <input type="text" id="minit" /><br /><br />
-
-    Last Name:
-    <input type="text" id="lname" /><br /><br />
-
-    Age:
-    <input type="text" id="age" /><br /><br />
-
-    Weight:
-    <input type="text" id="weight" /><br /><br />
-
-    <input type="submit" value="Submit" />
-
-  </form>
-</body>
+                if(weight<45 || weight>75){
+                    alert("Weight must be between 45 and 75");
+                    return false;
+                }
+                return true;
+            }//]]>
+        </script>
+    </head>
+    <body>
+        <form onsubmit="return validate();">
+            First Name: <input type="text" /><br />
+            Last Name: <input type="text" /><br />
+            Middle Initial: <input type="text" /><br />
+            Age: <input type="number" id="age"/><br />
+            Weight: <input type="number" id="weight"/><br />
+            <input type="submit" value="Submit" />
+        </form>
+    </body>
 </html>
-
